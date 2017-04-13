@@ -23,7 +23,7 @@
         </nav>
         <?php endif; ?>
 
-        <p><a href="/edit">New article</a></p>
+        <?php if (isLoggedIn()): ?><div class="bottomlinks"><a href="/edit">Nieuwe blog</a></div><?php endif; ?>
     </div>
 
     <div class="three wide column sidebar">
