@@ -1,0 +1,22 @@
+<?php $layout->title = $article['title']; ?>
+
+<article class="article">
+    <div class="date"><?= strftime('%e %B %Y', strtotime($article['published'])) ?></div>
+
+    <p><?= $article['lead'] ?></p>
+
+    <?= $article['content'] ?>
+
+
+    <div class="sharebar">
+        Deel dit artikel:
+        <?php $url = 'http://' . $_SERVER['HTTP_HOST'] . '/' . $article['slug']; ?>
+        <a href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode($url) ?>" target="_blank" class="facebook share link" title="Deel dit artikel op Facebook"><i class="facebook icon"></i></a>
+        <a href="https://twitter.com/home?status=<?= urlencode($article['title'].' '.$url) ?>&via=schrijfwub" target="_blank" class="twitter share link" title="Deel dit artikel op Twitter"><i class="twitter icon"></i></a>
+    </div>
+</article>
+
+<div class="bottomlinks">
+    <a href="/">Terug naar overzicht</a>
+    <?php if (isLoggedIn()): ?> - <a href="/edit/<?= $article['slug'] ?>">Bewerken</a><?php endif; ?>
+</div>

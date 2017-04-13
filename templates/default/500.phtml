@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Blog</title>
+</head>
+<body>
+
+<h1><?= $exception->getMessage() ?></h1>
+<p>In <?= $exception->getFile() ?> on line <?= $exception->getLine() ?></p>
+<pre><?= $exception->getTraceAsString() ?></pre>
+
+</body>
+</html>

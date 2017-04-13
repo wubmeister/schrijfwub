@@ -1,0 +1,74 @@
+<h1><?php if ($article && isset($article['id'])): ?>Edit '<?= $article['title'] ?>'<?php else: ?>New article<?php endif; ?></h1>
+
+<?php if ($formSuccess): ?>
+    <div style="color: green;">The article has been saved</div>
+<?php elseif ($error): ?>
+    <div style="color: red;"><?= $error ?></div>
+<?php endif; ?>
+
+<form method="post" action="/edit<?= $article ? '/'.$article['slug'] : '' ?>">
+    <p>
+        <label for="article_title">Title:</label><br/>
+        <input type="text" name="title" id="article_title" value="<?= $article ? $article['title'] : '' ?>" />
+    </p>
+    <p>
+        <label for="article_lead">Lead:</label><br/>
+        <textarea name="lead" id="article_lead"><?= $article ? $article['lead'] : '' ?></textarea>
+    </p>
+    <p>
+        <label for="article_content">Content:</label><br/>
+        <textarea name="content" id="article_content"><?= $article ? $article['content'] : '' ?></textarea>
+    </p>
+
+    <h3>Meta</h3>
+    <p>
+        <label>Categories</label><br/>
+        <?php foreach ($categoryOptions as $category): ?>
+            <input type="checkbox" name="categories[]" value="id:<?= $category['id'] ?>" id="article_categories_<?= $category['id'] ?>"<?= ($linkedCategories && in_array($category['id'], $linkedCategories)) ? ' checked' : '' ?> />
+            <label for="article_categories_<?= $category['id'] ?>"><?= $category['name'] ?></label><br/>
+        <?php endforeach; ?>
+        <input type="text" name="categories[]" value="" placeholder="New category" /><br/>
+    </p>
+    <p>
+        <label for="article_published">Publish date:</label><br/>
+        <input type="text" name="published" id="article_published" value="<?= $article ? $article['published'] : '' ?>" />
+    </p>
+    <p>
+        <button type="submit">Save</button>
+    </p>
+</form>
+
+<?php if ($article && isset($article['id'])): ?>
+    <p><a href="/<?= $article['slug'] ?>">Show article</a></p>
+<?php endif; ?>
+
+<script src="/assets/ckeditor/ckeditor.js"></script>
+
+<script>
+CKEDITOR.replace('article_content');
+
+window.addEventListener('keyup', function (e) {
+    var el, newEl, br;
+
+    el = e.target;
+    if (el.tagName.toLowerCase() == 'input' && el.type == 'text' && el.name == 'categories[]') {
+
+        if (!el.prevValue) {
+            newEl = document.createElement('input');
+            newEl.type = 'text';
+            newEl.name = 'categories[]';
+            newEl.setAttribute('placeholder', el.getAttribute('placeholder'));
+            br = document.createElement('br');
+            el.parentElement.insertBefore(newEl, el.nextElementSibling.nextSibling);
+            newEl.parentElement.insertBefore(br, newEl.nextSibling);
+        } else if (!el.value) {
+            newEl = el.nextElementSibling.nextSibling;
+            if (newEl.tagName.toLowerCase() == 'input' && !el.value) {
+                newEl.parentElement.removeChild(newEl.nextElementSibling);
+                newEl.parentElement.removeChild(newEl);
+            }
+        }
+        el.prevValue = el.value;
+    }
+});
+</script>

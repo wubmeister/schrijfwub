@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title><?= $title ?> | WubboBos.nl</title>
+
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Merriweather:400,400i,700,700i|Roboto:500">
+
+    <link rel="stylesheet" type="text/css" href="/assets/fonts/cubano/cubano.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/fonts/icomoon/style.css" />
+
+    <link rel="stylesheet" type="text/css" href="/assets/css/style.css" />
+</head>
+
+<body>
+
+    <div class="fixed topbar">
+        <div class="container">
+            <a class="brand" href="/">
+                <img src="/assets/images/brand-white.png" alt="Wub, Schrijf een eind op" class="white" />
+                <img src="/assets/images/brand-black.png" alt="Wub, Schrijf een eind op" class="black" />
+            </a>
+            <div class="social buttons">
+                <a href="https://facebook.com/schrijfeeneindop" target="_blank" class="facebook" title="Volg mij op Facebook"><i class="facebook icon"></i></a>
+                <a href="https://twitter.com/schrijfwub" target="_blank" class="twitter" title="Volg mij op Twitter"><i class="twitter icon"></i></a>
+                <!-- <a href="#" class="search" title="Zoeken"><i class="search icon"></i></a> -->
+            </div>
+        </div>
+        <!-- <form class="searchbar" method="get">
+            <input type="search" placeholder="Typ hier een zwikje zoekwoorden..." name="s" />
+            <button type="submit"><i class="search icon"></i></button>
+        </form> -->
+    </div>
+
+    <header class="<?php if (parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) != '/'): ?>low<?php endif; ?> header">
+        <img class="image" src="/assets/photos/header.jpg" alt="Omslagfoto" />
+        <div class="container">
+            <div class="caption headline"><?= $title ?></div>
+        </div>
+    </header>
+
+    <div class="main">
+        <div class="container">
+
+            <?= $content ?>
+
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="left">
+                &copy; <?= date('Y') ?> Wubbo Bos<br/>
+                Alle rechten voorbehouden
+                <?php if (isLoggedIn()): ?><br/><a href="/logout" style="color: rgba(255, 255, 255, 0.75)">Logout</a><?php endif; ?>
+            </div>
+            <div class="social buttons">
+                <a href="https://facebook.com/schrijfeeneindop" target="_blank" class="facebook" title="Volg mij op Facebook"><i class="facebook icon"></i></a>
+                <a href="https://twitter.com/schrijfwub" target="_blank" class="twitter" title="Volg mij op Twitter"><i class="twitter icon"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script type="text/javascript" src="/assets/js/scripts.js"></script>
+
+</body>
+</html>
