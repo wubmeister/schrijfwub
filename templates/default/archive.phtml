@@ -1,13 +1,14 @@
 <?php
 if ($year) {
     if ($month) {
-        $layout->title = 'Archief van ' . date('F', mktime(0, 0, 0, $month, 1, $year)) . ' ' . $year;
+        $title = 'Archief van ' . date('F', mktime(0, 0, 0, $month, 1, $year)) . ' ' . $year;
     } else {
-        $layout->title = 'Archief van ' . $year;
+        $title = 'Archief van ' . $year;
     }
 } else {
-    $layout->title = 'Archief';
+    $title = 'Archief';
 }
+$this->setGlobal('title', $title);
 ?>
 
 <div class="grid">

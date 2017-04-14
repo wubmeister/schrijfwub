@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <?php $title = $this->getGlobal('title', 'Blog'); ?>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <title><?= $title ?> | WubboBos.nl</title>
@@ -64,6 +65,6 @@
 
     <script type="text/javascript" src="/assets/js/scripts.js"></script>
 
-    <?php if (isset($scripts)): ?><?= $scripts ?><?php endif; ?>
+    <?= $this->getCapture('scripts') ?>
 </body>
 </html>

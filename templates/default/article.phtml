@@ -1,4 +1,4 @@
-<?php $layout->title = $article['title']; ?>
+<?php $this->setGlobal('title', $article['title']); ?>
 
 <article class="article">
     <div class="date"><?= strftime('%e %B %Y', strtotime($article['published'])) ?></div>
@@ -24,7 +24,9 @@
     </script>
     <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 
-    <?php $layout->scripts = '<script id="dsq-count-scr" src="//wubbbobos.disqus.com/count.js" async></script>'; ?>
+    <?php $this->startCapture('scripts'); ?>
+    <script id="dsq-count-scr" src="//wubbbobos.disqus.com/count.js" async></script>'
+    <?php $this->endCapture(); ?>
 </article>
 
 <div class="bottomlinks">

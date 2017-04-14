@@ -35,6 +35,18 @@ class Template
     protected $variables = [];
 
     /**
+     * Stack op capture names
+     * @var array
+     */
+    protected $captureStack = [];
+
+    /**
+     * The globally accessible captures
+     * @var array
+     */
+    protected static $captures = [];
+
+    /**
      * Constructs a template with a given name
      *
      * @param string $name The template name
@@ -110,5 +122,65 @@ class Template
         }
 
         return null;
+    }
+
+    /**
+     * Starts capturing a piece of the template to store it as globally accessible variable
+     *
+     * @param string $name The name to label the captured content
+     * @param bool $append Set to TRUE to append the content to previously captured content
+     */
+    protected function startCapture($name, $append = false)
+    {
+        $this->captureStack[] = [ $name, $append ];
+        ob_start();
+    }
+
+    /**
+     * Ends capturing a piece of the template
+     */
+    protected function endCapture()
+    {
+        if (count($this->captureStack) == 0) {
+            throw new \Exception('Unexpected \'endCapture\'');
+        }
+
+        list($name, $append) = array_pop($this->captureStack);
+        self::$captures[$name] = ($append ? $this->getCapture($name) . "\n" : '') . ob_get_contents();
+        ob_end_clean();
+    }
+
+    /**
+     * Gets the captured content identified by the given name
+     *
+     * @param string $name The name of the captured content
+     * @return string The captured content
+     */
+    protected function getCapture($name)
+    {
+        return isset(self::$captures[$name]) ? self::$captures[$name] : '';
+    }
+
+    /**
+     * Sets a globally accessible variable
+     *
+     * @param string $name The name of the variable
+     * @param mixed $value The value
+     */
+    public function setGlobal($name, $value)
+    {
+        self::$globals[$name] = $value;
+    }
+
+    /**
+     * Gets a globally accessible variable
+     *
+     * @param string $name The name of the variable
+     * @param mixed $defaultValue The default value to return if the variable was not set
+     * @return mixed The value
+     */
+    public function getGlobal($name, $defaultValue = null)
+    {
+        return isset(self::$globals[$name]) ? self::$globals[$name] : $defaultValue;
     }
 }
