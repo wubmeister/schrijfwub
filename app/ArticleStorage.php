@@ -70,7 +70,7 @@ class ArticleStorage
     public function fetchByCategory($categoryId)
     {
         $from = "FROM `blog_category_has_articles` AS `link` LEFT JOIN `blog_articles` AS `a` ON `a`.`id` = `link`.`article_id`";
-        $where = "WHERE `link`.`category_id` = :category_id";
+        $where = "WHERE `link`.`category_id` = :category_id AND `a`.`published` < NOW()";
         $params = [ 'category_id' => (int)$categoryId ];
         return $this->listArticles("`a`.`id`, `a`.`title`, `a`.`slug`, `a`.`lead`, `a`.`published`", $from, $where, $params);
     }
@@ -82,7 +82,7 @@ class ArticleStorage
      */
     public function fetchByTag($tagSlug)
     {
-        $from = "FROM `blog_categories` AS `c` LEFT JOIN `blog_category_has_articles` AS `link` ON `link`.`category_id` = `c`.`id` LEFT JOIN `blog_articles` AS `a` ON `a`.`id` = `link`.`article_id`";
+        $from = "FROM `blog_categories` AS `c` LEFT JOIN `blog_category_has_articles` AS `link` ON `link`.`category_id` = `c`.`id` LEFT JOIN `blog_articles` AS `a` ON `a`.`id` = `link`.`article_id` AND `a`.`published` < NOW()";
         $where = "WHERE `c`.`type` = 'tag' AND `c`.`slug` = :slug";
         $params = [ 'slug' => $tagSlug ];
         return $this->listArticles("`a`.`id`, `a`.`title`, `a`.`slug`, `a`.`lead`, `a`.`published`", $from, $where, $params);
@@ -121,7 +121,7 @@ class ArticleStorage
      */
     function getArchiveList()
     {
-        $sql = "SELECT LEFT(`published`, 7) AS `year_month`, COUNT(*) AS `count` FROM `blog_articles` GROUP BY `year_month` ASC";
+        $sql = "SELECT LEFT(`published`, 7) AS `year_month`, COUNT(*) AS `count` FROM `blog_articles` WHERE `published` < NOW() GROUP BY `year_month` ASC";
         $rows = $this->db->fetchAll($sql);
 
         $years = [];
@@ -147,7 +147,12 @@ class ArticleStorage
      */
     public function getCategoryArchiveList()
     {
-        $sql = "SELECT `c`.*, COUNT(*) AS `count` FROM `blog_categories` AS `c` LEFT JOIN `blog_category_has_articles` AS `link` ON `link`.`category_id` = `c`.`id` GROUP BY `c`.`id`";
+        $sql = "SELECT `c`.*, COUNT(*) AS `count`
+            FROM `blog_categories` AS `c`
+            LEFT JOIN `blog_category_has_articles` AS `link` ON `link`.`category_id` = `c`.`id`
+            LEFT JOIN `blog_articles` AS `a` ON `a`.`id` = `link`.`article_id`
+            WHERE `a`.`published` < NOW()
+            GROUP BY `c`.`id`";
         $list = $this->db->fetchAll($sql);
 
         return $list;

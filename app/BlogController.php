@@ -105,10 +105,9 @@ class BlogController
      */
     protected function showIndex()
     {
-        $result = $this->articleStorage->listArticles("`id`, `title`, `slug`, `lead`, `published`", "FROM `blog_articles`");
+        $result = $this->articleStorage->listArticles("`id`, `title`, `slug`, `lead`, `published`", "FROM `blog_articles`", " WHERE `published` < NOW()");
 
         $template = new Template('index');
-        $template->layout = $this->layout;
         $template->archiveList = $this->articleStorage->getArchiveList();
         $template->categories = $this->articleStorage->getCategoryArchiveList();
         $content = $template->render($result);
@@ -124,8 +123,10 @@ class BlogController
         $where = "";
         if ($year) {
             $year = (int)$year;
+            $thisYear = idate('Y');
             if ($month) {
                 $month = (int)$month;
+                $thisMonth = idate('n');
                 $nextYear = $year;
                 $nextMonth = $month + 1;
                 if ($nextMonth > 12) {
@@ -133,11 +134,27 @@ class BlogController
                     $nextMonth = 1;
                 }
 
-                $where = sprintf("WHERE `published` BETWEEN '%04d-%02d-01 00:00:00' AND '%04d-%02d-01 00:00:00'", $year, $month, $nextYear, $nextMonth);
+                if ($year >= $thisYear && $month > $thisMonth) {
+                    $where = null;
+                } else if ($nextYear == $thisYear && $nextMonth == $thisMonth) {
+                        $where = sprintf("WHERE `published` BETWEEN '%04d-%02d-01 00:00:00' AND NOW()", $year, $month);
+                } else {
+                    $where = sprintf("WHERE `published` BETWEEN '%04d-%02d-01 00:00:00' AND '%04d-%02d-01 00:00:00'", $year, $month, $nextYear, $nextMonth);
+                }
             } else {
                 $nextYear = $year + 1;
-                $where = sprintf("WHERE `published` BETWEEN '%04d-01-01 00:00:00' AND '%04d-01-01 00:00:00'", $year, $nextYear);
+                if ($year > $thisYear) {
+                    $where = null;
+                } else if ($nextYear == $thisYear) {
+                    $where = sprintf("WHERE `published` BETWEEN '%04d-01-01 00:00:00' AND NOW()", $year);
+                } else {
+                    $where = sprintf("WHERE `published` BETWEEN '%04d-01-01 00:00:00' AND '%04d-01-01 00:00:00'", $year, $nextYear);
+                }
             }
+        }
+
+        if ($where == null) {
+            throw new NotFoundException();
         }
 
         $result = $this->articleStorage->listArticles("`id`, `title`, `slug`, `lead`, `published`", "FROM `blog_articles`", $where);
@@ -145,7 +162,6 @@ class BlogController
         $result['month'] = $month;
 
         $template = new Template('archive');
-        $template->layout = $this->layout;
         $template->archiveList = $this->articleStorage->getArchiveList();
         $template->categories = $this->articleStorage->getCategoryArchiveList();
 
@@ -161,7 +177,6 @@ class BlogController
         $result['tag'] = $tagSlug;
 
         $template = new Template('tag-archive');
-        $template->layout = $this->layout;
         $this->layout->content = $template->render($result);
     }
 
@@ -195,7 +210,9 @@ class BlogController
         if ($_POST) {
             // TODO: validate POST etc.
             $values = $_POST;
-            $values['published'] = date('Y-m-d H:i:s');
+            if (!$values['published']) {
+                $values['published'] = date('Y-m-d H:i:s');
+            }
             $values['created'] = date('Y-m-d H:i:s');
             $values['slug'] = generateSlug($values['title']);
 
@@ -270,7 +287,6 @@ class BlogController
 
         $template = new Template('edit-article');
         $this->layout->title = 'Edit article';
-        $template->layout = $this->layout;
         $this->layout->content = $template->render($result);
     }
 
@@ -282,7 +298,6 @@ class BlogController
         $result = $this->articleStorage->fetchByCategory($category['id']);
 
         $template = new Template('category');
-        $template->layout = $this->layout;
         $template->category = $category;
         $template->archiveList = $this->articleStorage->getArchiveList();
         $template->categories = $this->articleStorage->getCategoryArchiveList();
@@ -301,7 +316,8 @@ class BlogController
             throw new NotFoundException();
         }
         $template = new Template('article');
-        $template->layout = $this->layout;
+        $template->archiveList = $this->articleStorage->getArchiveList();
+        $template->categories = $this->articleStorage->getCategoryArchiveList();
         $this->layout->content = $template->render([ 'article' => $article ]);
     }
 }
