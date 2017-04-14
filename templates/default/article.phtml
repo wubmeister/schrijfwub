@@ -12,6 +12,19 @@
         <a href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode($url) ?>" target="_blank" class="facebook share link" title="Deel dit artikel op Facebook"><i class="facebook icon"></i></a>
         <a href="https://twitter.com/home?status=<?= urlencode($article['title'].' '.$url) ?>&via=schrijfwub" target="_blank" class="twitter share link" title="Deel dit artikel op Twitter"><i class="twitter icon"></i></a>
     </div>
+
+    <div id="disqus_thread"></div>
+    <script>
+    (function() { // DON'T EDIT BELOW THIS LINE
+    var d = document, s = d.createElement('script');
+    s.src = 'https://wubbbobos.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+    <?php $layout->scripts = '<script id="dsq-count-scr" src="//wubbbobos.disqus.com/count.js" async></script>'; ?>
 </article>
 
 <div class="bottomlinks">
