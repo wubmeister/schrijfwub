@@ -4,7 +4,7 @@ $this->setGlobal('title', $title);
 ?>
 <div class="article">
 
-    <h1>$title</h1>
+    <h1><?= $title ?></h1>
 
     <?php if ($formSuccess): ?>
         <div style="color: green;">The article has been saved</div>
@@ -47,6 +47,8 @@ $this->setGlobal('title', $title);
 <?php if ($article && isset($article['id'])): ?>
     <div class="bottomlinks"><a href="/<?= $article['slug'] ?>">Show article</a></div>
 <?php endif; ?>
+
+</div>
 
 <?php $this->startCapture('scripts'); ?>
 <script src="/assets/ckeditor/ckeditor.js"></script>

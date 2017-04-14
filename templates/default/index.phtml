@@ -37,23 +37,6 @@
     </div>
 
     <div class="three wide column sidebar">
-        <h3 class="headline">Archief</h3>
-
-        <h4 class="subheader">Per maand</h4>
-        <ul class="navigation">
-            <?php foreach ($archiveList as $year => $yearData): ?>
-                <?php foreach ($yearData['months'] as $month => $monthData): ?>
-                    <li class="item"><a href="/archive/<?= $year ?>/<?= $month ?>"><?= $monthData['name'] ?> <?= $year ?> (<?= $monthData['count'] ?>)</a></li>
-                <?php endforeach; ?>
-            <?php endforeach; ?>
-        </ul>
-
-        <h4 class="subheader">Per categorie</h4>
-        <ul class="navigation">
-            <?php foreach ($categories as $category): ?>
-                <li class="item"><a href="/<?= $category['slug'] ?>"><?= $category['name'] ?> (<?= $category['count'] ?>)</a></li>
-            <?php endforeach; ?>
-        </ul>
-
+        <?php include 'archivelist.phtml'; ?>
     </div>
 </div>
