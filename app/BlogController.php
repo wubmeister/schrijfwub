@@ -198,7 +198,7 @@ class BlogController
         ];
 
         if ($articleSlug) {
-            $article = $this->articleStorage->fetchArticleBySlug($articleSlug, isLoggedIn());
+            $article = $this->articleStorage->fetchArticleBySlug($articleSlug, true);
 
             if (!$article) {
                 throw new NotFoundException();

@@ -46,7 +46,7 @@ function generateSlug($string, $maxLength = 32)
 		$pos = strrpos(substr($string, 0, $maxLength), ' ');
 		$string = substr($string, 0, $pos);
 	}
-	return strtolower(preg_replace('/[^a-zA-Z0-9]+/', '-', $string));
+	return trim(strtolower(preg_replace('/[^a-zA-Z0-9]+/', '-', $string)), '-');
 }
 
 function show404(RequestInterface $request, ResponseInterface $response, callable $next = null)
