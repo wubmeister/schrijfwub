@@ -72,7 +72,7 @@ class ArticleStorage
         $from = "FROM `blog_category_has_articles` AS `link` LEFT JOIN `blog_articles` AS `a` ON `a`.`id` = `link`.`article_id`";
         $where = "WHERE `link`.`category_id` = :category_id AND `a`.`published` < NOW()";
         $params = [ 'category_id' => (int)$categoryId ];
-        return $this->listArticles("`a`.`id`, `a`.`title`, `a`.`slug`, `a`.`lead`, `a`.`published`", $from, $where, $params);
+        return $this->listArticles("`a`.`id`, `a`.`title`, `a`.`slug`, `a`.`lead`, `a`.`image_url`, `a`.`published`", $from, $where, $params);
     }
 
     /**
@@ -85,7 +85,7 @@ class ArticleStorage
         $from = "FROM `blog_categories` AS `c` LEFT JOIN `blog_category_has_articles` AS `link` ON `link`.`category_id` = `c`.`id` LEFT JOIN `blog_articles` AS `a` ON `a`.`id` = `link`.`article_id` AND `a`.`published` < NOW()";
         $where = "WHERE `c`.`type` = 'tag' AND `c`.`slug` = :slug";
         $params = [ 'slug' => $tagSlug ];
-        return $this->listArticles("`a`.`id`, `a`.`title`, `a`.`slug`, `a`.`lead`, `a`.`published`", $from, $where, $params);
+        return $this->listArticles("`a`.`id`, `a`.`title`, `a`.`slug`, `a`.`lead`, `a`.`image_url`, `a`.`published`", $from, $where, $params);
     }
 
     /**

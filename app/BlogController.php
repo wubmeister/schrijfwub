@@ -105,7 +105,7 @@ class BlogController
      */
     protected function showIndex()
     {
-        $result = $this->articleStorage->listArticles("`id`, `title`, `slug`, `lead`, `published`", "FROM `blog_articles`", " WHERE `published` < NOW()");
+        $result = $this->articleStorage->listArticles("`id`, `title`, `slug`, `lead`, `image_url`, `published`", "FROM `blog_articles`", " WHERE `published` < NOW()");
 
         $template = new Template('index');
         $template->archiveList = $this->articleStorage->getArchiveList();
@@ -157,7 +157,7 @@ class BlogController
             throw new NotFoundException();
         }
 
-        $result = $this->articleStorage->listArticles("`id`, `title`, `slug`, `lead`, `published`", "FROM `blog_articles`", $where);
+        $result = $this->articleStorage->listArticles("`id`, `title`, `slug`, `lead`, `image_url`, `published`", "FROM `blog_articles`", $where);
         $result['year'] = $year;
         $result['month'] = $month;
 

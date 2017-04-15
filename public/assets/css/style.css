@@ -453,6 +453,7 @@ button,
   bottom: 0;
   left: 0;
   background-size: cover;
+  background-position: center center;
   opacity: 0.5;
   border-radius: 2px;
   transition: opacity 200ms;
