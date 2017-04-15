@@ -1,9 +1,14 @@
 <?php $this->setGlobal('title', $article['title']); ?>
 
+<?php if (!empty($article['image_url'])) $this->setGlobal('headerImage', $article['image_url']); ?>
+
 <?php $this->startCapture('meta', true); ?>
     <meta property="og:title" content="<?= $article['title'] ?>" />
     <meta property="og:type" content="article" />
     <meta property="og:description" content="<?= $article['lead'] ?>" />
+    <?php if ($article['image_url']): ?>
+    <meta property="og:image" content="<?= 'http://' . $_SERVER['HTTP_HOST'] . $article['image_url'] ?>" />
+    <?php endif; ?>
 <?php $this->endCapture(); ?>
 
 <div class="grid">

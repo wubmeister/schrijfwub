@@ -25,6 +25,10 @@ $this->setGlobal('title', $title);
             <label for="article_content">Content:</label><br/>
             <textarea name="content" id="article_content"><?= $article ? $article['content'] : '' ?></textarea>
         </p>
+        <p>
+            <label for="article_image_url">Image URL:</label><br/>
+            <input type="text" name="image_url" id="article_image_url" value="<?= $article ? $article['image_url'] : '' ?>" />
+        </p>
 
         <h3>Meta</h3>
         <p>

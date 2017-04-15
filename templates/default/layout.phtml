@@ -37,7 +37,7 @@
     </div>
 
     <header class="<?php if (parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) != '/'): ?>low<?php endif; ?> header">
-        <img class="image" src="/assets/photos/header.jpg" alt="Omslagfoto" />
+        <img class="image" src="<?= $this->getGlobal('headerImage', '/assets/photos/header.jpg') ?>" alt="Omslagfoto" />
         <div class="container">
             <div class="caption headline"><?= $title ?></div>
         </div>
