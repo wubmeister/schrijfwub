@@ -56,9 +56,11 @@ class ArticleStorage
      * @param string $slug The article's slug
      * @return array The article or NULL if no article was found
      */
-    public function fetchArticleBySlug($slug)
+    public function fetchArticleBySlug($slug, $ignorePubDate = false)
     {
-        $sql = "SELECT * FROM `blog_articles` WHERE `slug` = :slug AND `published` < NOW() ORDER BY `published` DESC LIMIT 1";
+        $sql = "SELECT * FROM `blog_articles` WHERE `slug` = :slug ";
+        if (!$ignorePubDate) $sql .= "AND `published` < NOW() ";
+        $sql .= "ORDER BY `published` DESC LIMIT 1";
         return $this->db->fetchRow($sql, [ 'slug' => $slug ]);
     }
 

@@ -198,7 +198,7 @@ class BlogController
         ];
 
         if ($articleSlug) {
-            $article = $this->articleStorage->fetchArticleBySlug($articleSlug);
+            $article = $this->articleStorage->fetchArticleBySlug($articleSlug, isLoggedIn());
 
             if (!$article) {
                 throw new NotFoundException();
@@ -310,7 +310,7 @@ class BlogController
      */
     protected function showArticle($articleSlug)
     {
-        $article = $this->articleStorage->fetchArticleBySlug($articleSlug);
+        $article = $this->articleStorage->fetchArticleBySlug($articleSlug, isLoggedIn());
 
         if (!$article) {
             throw new NotFoundException();
