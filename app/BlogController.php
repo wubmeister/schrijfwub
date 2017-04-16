@@ -107,7 +107,7 @@ class BlogController
     {
         $result = $this->articleStorage->listArticles("`id`, `title`, `slug`, `lead`, `image_url`, `published`", "FROM `blog_articles`", " WHERE `published` < NOW()");
 
-        $template = new Template('index');
+        $template = new Template('blog/index');
         $template->archiveList = $this->articleStorage->getArchiveList();
         $template->categories = $this->articleStorage->getCategoryArchiveList();
         $content = $template->render($result);
@@ -161,7 +161,7 @@ class BlogController
         $result['year'] = $year;
         $result['month'] = $month;
 
-        $template = new Template('archive');
+        $template = new Template('blog/archive');
         $template->archiveList = $this->articleStorage->getArchiveList();
         $template->categories = $this->articleStorage->getCategoryArchiveList();
 
@@ -176,7 +176,7 @@ class BlogController
         $result = $this->articleStorage->fetchByTag($tagSlug);
         $result['tag'] = $tagSlug;
 
-        $template = new Template('tag-archive');
+        $template = new Template('blog/tag-archive');
         $this->layout->content = $template->render($result);
     }
 
@@ -285,7 +285,7 @@ class BlogController
             $result['linkedCategories'] = array_map(function ($cat) { return $cat['id']; }, $linkedCats);
         }
 
-        $template = new Template('edit-article');
+        $template = new Template('blog/edit-article');
         $this->layout->title = 'Edit article';
         $this->layout->content = $template->render($result);
     }
@@ -297,7 +297,7 @@ class BlogController
     {
         $result = $this->articleStorage->fetchByCategory($category['id']);
 
-        $template = new Template('category');
+        $template = new Template('blog/category');
         $template->category = $category;
         $template->archiveList = $this->articleStorage->getArchiveList();
         $template->categories = $this->articleStorage->getCategoryArchiveList();
@@ -315,7 +315,7 @@ class BlogController
         if (!$article) {
             throw new NotFoundException();
         }
-        $template = new Template('article');
+        $template = new Template('blog/article');
         $template->archiveList = $this->articleStorage->getArchiveList();
         $template->categories = $this->articleStorage->getCategoryArchiveList();
         $this->layout->content = $template->render([ 'article' => $article ]);
