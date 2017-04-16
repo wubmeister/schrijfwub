@@ -40,7 +40,7 @@ class ArticleStorage
         $countRow = $this->db->fetchRow($countSql, $params);
         $pagination = $this->getPagination($countRow ? (int)$countRow['count'] : 0);
 
-        $sql .= " LIMIT {$pagination['first_item_index']}, {$pagination['items_per_page']}";
+        $sql .= " ORDER BY `published` DESC LIMIT {$pagination['first_item_index']}, {$pagination['items_per_page']}";
 
         $articles = $this->db->fetchAll($sql, $params);
 
