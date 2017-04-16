@@ -8,7 +8,7 @@ class Template
      * The global theme
      * @var string
      */
-    public static $theme;
+    public static $theme = 'default';
 
     /**
      * The themes directory
@@ -75,6 +75,16 @@ class Template
     }
 
     /**
+     * Gets the theme for this template
+     *
+     * @param string $theme The theme name. Omit the theme name to reset to the default global theme
+     */
+    public function getTheme($theme = null)
+    {
+        return $this->overrideTheme ? $this->overrideTheme : self::$theme;
+    }
+
+    /**
      * Sets a theme variable
      *
      * @param string $name The variable name
@@ -115,7 +125,7 @@ class Template
      */
     protected function resolveFileName()
     {
-        $theme = $this->overrideTheme ? $this->overrideTheme : self::$theme;
+        $theme = $this->getTheme();
         $themePath = self::$themesDir . '/' . $theme . '/' . $this->name . '.phtml';
 
         if (file_exists($themePath)) {
@@ -188,5 +198,73 @@ class Template
     public function getGlobal($name, $defaultValue = null)
     {
         return isset(self::$globals[$name]) ? self::$globals[$name] : $defaultValue;
+    }
+
+    /**
+     * Gets the path to an asset
+     *
+     * @param string $asset The relative path to the asset
+     * @return string The real path to the asset
+     */
+    public function getAssetPath($asset)
+    {
+        return '/assets/' . $this->getTheme() . '/' . $asset;
+    }
+
+    /**
+     * Inserts a link to an asset. This method will choose between a LINK,
+     * SCRIPT or IMG tag based on the extension of the asset. The tag name can
+     * be overruled by the second parameter
+     *
+     * @param string $asset The path to the asset
+     * @param array $attributes Additional attributes for the tag
+     * @param string $tagName The tag name. Specify one to overrule the automatically chosen tag name
+     * @return string The HTML tag to link to the asset
+     */
+    public function asset($asset, $attributes = [], $tagName = null)
+    {
+        $ext = pathinfo($asset, PATHINFO_EXTENSION);
+        $path = $this->getAssetPath($asset);
+
+        if (is_string($attributes) && !$tagName) {
+            $tagName = $attributes;
+            $attributes = [];
+        }
+
+        if (!$tagName) {
+            if ($ext == 'css' || $ext == 'ico') {
+                $tagName = 'link';
+            } else if ($ext == 'js') {
+                $tagName = 'script';
+            } else {
+                $tagName = 'img';
+            }
+        }
+
+        switch ($tagName) {
+            case 'link':
+                if ($ext == 'ico') {
+                    if (!isset($attributes['type'])) $attributes['rel'] = 'shortcut icon';
+                    if (!isset($attributes['type'])) $attributes['type'] = 'image/x-icon';
+                } else {
+                    if (!isset($attributes['type'])) $attributes['rel'] = 'stylesheet';
+                    if (!isset($attributes['type'])) $attributes['type'] = 'text/css';
+                }
+                $attributes['href'] = $path;
+                break;
+
+            case 'script':
+            case 'img':
+                $attributes['src'] = $path;
+                break;
+        }
+
+        $html = '<' . $tagName;
+        foreach ($attributes as $key => $value) {
+            $html .= ' ' . $key . '="' . $value . '"';
+        }
+        $html .= $tagName == 'script' ? '></script>' : ' />';
+
+        return $html;
     }
 }
