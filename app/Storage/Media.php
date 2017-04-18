@@ -2,6 +2,8 @@
 
 namespace App\Storage;
 
+use App\Database;
+
 /**
  * Class to manage media in the database
  */

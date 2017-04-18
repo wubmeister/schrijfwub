@@ -2,6 +2,9 @@
 
 namespace App\Router;
 
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
+
 /**
  * Abstract class for middleware classes which can route a URL to a piece of code
  */
@@ -9,7 +12,7 @@ abstract class AbstractRouter
 {
 	/**
 	 * The request
-	 * @var ServerRequestInterface
+	 * @var RequestInterface
 	 */
 	protected $request;
 
@@ -26,19 +29,19 @@ abstract class AbstractRouter
 	 * It can also happen that a route returns a Response instance. In that case,
 	 * that response instance will be used as the response to the request
 	 *
-	 * @param ServerRequestInterface $request The request
+	 * @param RequestInterface $request The request
 	 * @param ResponseInterface $response The response
 	 * @param callable $next The next callable in the chain
 	 * @return ResponseInterface The new response
 	 */
-	public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next = null)
+	public function __invoke(RequestInterface $request, ResponseInterface $response, $next = null)
 	{
         $this->request = $request;
         $this->response = $response;
 
 		$tail = $request->getAttribute('route_tail');
 		if (!$tail) {
-			$tail = $request->getUrl()->getPath();
+			$tail = $request->getUri()->getPath();
 		}
 
 		if ($match = $this->matchAgainst($tail)) {
@@ -55,7 +58,7 @@ abstract class AbstractRouter
 					$middleware = new $middleware();
 				}
 
-				$response = $middleware($request->withAttributes($match), $reponse);
+				$response = $middleware($request->withAttributes($match), $response);
 			} else {
 				throw new Exception('Invalid router match');
 			}

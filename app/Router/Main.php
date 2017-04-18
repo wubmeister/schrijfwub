@@ -4,7 +4,7 @@ namespace App\Router;
 
 use App\Controller\Blog as BlogController;
 
-class MainRouter extends AbstractRouter
+class Main extends AbstractRouter
 {
 	protected function matchAgainst($url)
 	{
@@ -30,6 +30,11 @@ class MainRouter extends AbstractRouter
 				shift($chunks);
 				$match['callable'] = new CommentsController($db);
 				$match['route_tail'] = '/' . implode($chunks);
+				break;
+
+			case 'mail':
+				$match['response'] = $this->response;
+				sendMail('Testmail', 'testmail', 'Wubbo Bos', 'wubbobos@gmail.com', [ 'foo' => 'Bar' ]);
 				break;
 
 			// case 'media':

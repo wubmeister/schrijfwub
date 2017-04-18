@@ -7,29 +7,6 @@ use App\Database;
 use App\Storage\Comments as CommentStorage;
 use App\Storage\Commenters as CommenterStorage;
 
-/*
-CREATE TABLE `blog_commenters` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `email` VARCHAR(256) NOT NULL,
-  `name` VARCHAR(128) NOT NULL,
-  `is_active` TINYINT(1) NOT NULL DEFAULT 1
-);
-
-CREATE TABLE `blog_comments` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `article_id` INT UNSIGNED NOT NULL,
-  `in_reply_to` INT UNSIGNED NOT NULL,
-  `commenter_id` INT UNSIGNED NOT NULL,
-  `ip` INT UNSIGNED NOT NULL,
-  `comment` TEXT NOT NULL,
-  `is_visible` TINYINT NOT NULL DEFAULT 1,
-  `confirm_key` VARCHAR(32),
-  `created` DATETIME,
-  `modified` DATETIME,
-  FOREIGN KEY (`article_id`) REFERENCES `blog_articles`(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`commenter_id`) REFERENCES `blog_commenters`(`id`) ON DELETE CASCADE
-);
-*/
 
 class Comments extends AbstractRouter
 {

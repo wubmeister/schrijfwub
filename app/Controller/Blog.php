@@ -2,10 +2,8 @@
 
 namespace App\Controller;
 
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
-
 use App\Router\AbstractRouter;
+use App\Template;
 use App\Database;
 use App\Storage\Articles as ArticleStorage;
 
@@ -52,7 +50,7 @@ class Blog extends AbstractRouter
      */
     protected function matchAgainst($url)
     {
-        $chunks = $this->chunkify($request->getUri()->getPath());
+        $chunks = $this->chunkify($url);
 
         switch ($chunks[0]) {
             case '':
@@ -92,7 +90,7 @@ class Blog extends AbstractRouter
 
         $this->response->getBody()->write($this->layout->render());
 
-        return [ 'response' => $response ];
+        return [ 'response' => $this->response ];
     }
 
     /**

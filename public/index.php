@@ -17,7 +17,7 @@ $config = include dirname(__DIR__) . '/config/local.config.php';
 Template::$themesDir = dirname(__DIR__) . '/templates';
 
 $db = new App\Database($config['db']);
-$articleStorage = new App\ArticleStorage($db);
+$articleStorage = new App\Storage\Articles($db);
 
 /* Basic login check */
 
@@ -41,6 +41,24 @@ function getIdentity()
 }
 
 /* Funciones */
+
+function sendMail($subject, $templateName, $toName, $toEmail, $variables)
+{
+	$template = new Template($templateName);
+
+	$mail = new App\Mail\Mail();
+	$mail
+		->setFrom('schrijf@wubbobos.nl', 'Wubbo Bos')
+		->addTo($toEmail, $toName)
+		->setSubject($subject);
+
+	$template->toName = $toName;
+	$template->toEmail = $toEmail;
+	$mail->setBody($template->render($variables));
+
+	$transport = new App\Mail\Transport\Sendmail();
+	$transport->send($mail);
+}
 
 function generateSlug($string, $maxLength = 32)
 {
