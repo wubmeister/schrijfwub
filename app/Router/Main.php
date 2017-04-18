@@ -1,0 +1,46 @@
+<?php
+
+namespace App\Router;
+
+use App\Controller\Blog as BlogController;
+
+class MainRouter extends AbstractRouter
+{
+	protected function matchAgainst($url)
+	{
+		$chunks = $this->chunkify($url);
+		$match = [];
+
+		switch ($chunks[0]) {
+			case 'login':
+				shift($chunks);
+				$match['callable'] = 'handleLogin';
+				$match['route_tail'] = '/' . implode($chunks);
+				break;
+
+			case 'logout':
+				shift($chunks);
+				$match['callable'] = 'handleLogin';
+				$match['route_tail'] = '/' . implode($chunks);
+				break;
+
+			// case 'media':
+			// 	shift($chunks);
+			// 	$match['callable'] = new MediaController();
+			// 	$match['route_tail'] = '/' . implode($chunks);
+			// 	break;
+
+			// case 'admin':
+			// 	shift($chunks);
+			// 	$match['callable'] = new AdminRouter();
+			// 	$match['route_tail'] = '/' . implode($chunks);
+			// 	break;
+
+			default:
+				$match['callable'] = new BlogController();
+				break;
+		}
+
+		return $match;
+	}
+}

@@ -1,14 +1,18 @@
 <?php
 
-namespace App;
+namespace App\Controller;
 
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
+use App\Router\AbstractRouter;
+use App\Database;
+use App\Storage\Articles as ArticleStorage;
+
 /**
  * This 'controller' does everything blog-related
  */
-class BlogController
+class Blog extends AbstractRouter
 {
     /**
      * The database
@@ -29,12 +33,6 @@ class BlogController
     protected $layout;
 
     /**
-     * The request
-     * @var Template
-     */
-    protected $request;
-
-    /**
      * Constructs the blog controller with a Database object
      *
      * @param Database $db The database
@@ -47,19 +45,14 @@ class BlogController
     }
 
     /**
-     * Invokes the controller
+     * Handles a URL
      *
-     * @param RequestInterface $request The request
-     * @param ResponseInterface $response The response
-     * @param callable $next The next middleware in the chain
-     * @return ResponseInterface The response
+     * @param string $url
+     * @return array The route match
      */
-    public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next = null)
+    protected function matchAgainst($url)
     {
-        $pathname = $request->getUri()->getPath();
-        $chunks = explode('/', ltrim($pathname, '/'));
-
-        $this->request = $request;
+        $chunks = $this->chunkify($request->getUri()->getPath());
 
         switch ($chunks[0]) {
             case '':
@@ -91,13 +84,9 @@ class BlogController
                 }
         }
 
-        $response->getBody()->write($this->layout->render());
+        $this->response->getBody()->write($this->layout->render());
 
-        if ($next) {
-            $response = $next($request, $response);
-        }
-
-        return $response;
+        return [ 'response' => $response ];
     }
 
     /**

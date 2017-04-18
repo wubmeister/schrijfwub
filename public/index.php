@@ -135,28 +135,12 @@ function handleLogout(RequestInterface $request, ResponseInterface $response, ca
 	exit;
 }
 
-function route(RequestInterface $request, ResponseInterface $response, callable $next = null)
-{
-	global $db;
-
-	$path = $request->getUri()->getPath();
-	if (preg_match('/^\/login\b/', $path)) {
-		$response = handleLogin($request, $response, $next);
-	} else if (preg_match('/^\/logout\b/', $path)) {
-		$response = handleLogout($request, $response, $next);
-	} else {
-		$blogController = new App\BlogController($db);
-		$response = $blogController($request, $response, $next);
-	}
-
-	return $response;
-}
-
 $request = new ServerRequest();
 $response = new Response();
 
 try {
-	$response = route($request, $response);
+	$router = new App\Router\Main();
+	$response = $router($request, $response);
 } catch (App\NotFoundException $ex) {
 	$response = show404($request, $response);
 } catch (Exception $ex) {

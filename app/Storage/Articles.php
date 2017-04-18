@@ -1,11 +1,11 @@
 <?php
 
-namespace App;
+namespace App\Storage;
 
 /**
  * Class to manage blog articles in the database
  */
-class ArticleStorage
+class Articles
 {
     /**
      * The database
