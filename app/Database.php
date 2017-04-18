@@ -25,6 +25,7 @@ class Database
     public function __construct()
     {
         $this->pdo = new PDO('mysql:host=127.0.0.1;dbname=blog', 'bloguser', 'eD9JEajJLzqskyYJWVDX');
+        $this->pdo->exec("SET time_zone='" . date('P') . "'");
     }
 
     /**

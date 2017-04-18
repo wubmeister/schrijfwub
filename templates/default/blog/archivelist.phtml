@@ -1,0 +1,18 @@
+
+        <h3 class="headline">Archief</h3>
+
+        <h4 class="subheader">Per maand</h4>
+        <ul class="navigation">
+            <?php foreach ($archiveList as $y => $yearData): ?>
+                <?php foreach ($yearData['months'] as $m => $monthData): ?>
+                    <li class="<?= ($m == $month && $y == $year) ? 'active ' : '' ?>item"><a href="/archive/<?= $y ?>/<?= $m ?>"><?= $monthData['name'] ?> <?= $y ?> (<?= $monthData['count'] ?>)</a></li>
+                <?php endforeach; ?>
+            <?php endforeach; ?>
+        </ul>
+
+        <h4 class="subheader">Per categorie</h4>
+        <ul class="navigation">
+            <?php foreach ($categories as $cat): ?>
+                <li class="<?= ($cat['id'] == $category['id']) ? 'active ' : '' ?>item"><a href="/<?= $cat['slug'] ?>"><?= $cat['name'] ?> (<?= $cat['count'] ?>)</a></li>
+            <?php endforeach; ?>
+        </ul>

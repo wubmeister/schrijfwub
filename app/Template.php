@@ -47,6 +47,12 @@ class Template
     protected static $captures = [];
 
     /**
+     * The globally accessible variables
+     * @var array
+     */
+    protected static $globals = [];
+
+    /**
      * Constructs a template with a given name
      *
      * @param string $name The template name

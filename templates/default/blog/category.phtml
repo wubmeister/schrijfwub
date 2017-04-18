@@ -1,0 +1,25 @@
+<?php $this->setGlobal('title', $category['name']); ?>
+
+<div class="grid">
+    <div class="eight wide column">
+        <div class="two blocks">
+            <?php include 'articles.phtml'; ?>
+        </div>
+
+        <?php if ($pagination['page_count'] > 1): ?>
+        <nav class="pagination">
+            <?php if ($pagination['current'] > $pagination['first']): ?><a class="next item">&laquo; Vorige pagina</a><?php endif; ?>
+            <?php for ($page = $pagination['first']; $page <= $pagination['last']; $page++): ?>
+                <a href="?page=<?= $page ?>" class="<?= ($page == $pagination['current']) ? 'active ' : '' ?>item"><?= $page ?></a>
+            <?php endfor; ?>
+            <?php if ($pagination['current'] < $pagination['last']): ?><a class="next item">Volgende pagina &raquo;</a><?php endif; ?>
+        </nav>
+        <?php endif; ?>
+
+        <?php if (isLoggedIn()): ?><div class="bottomlinks"><a href="/edit">Nieuwe blog</a></div><?php endif; ?>
+    </div>
+
+    <div class="three wide column sidebar">
+        <?php include 'archivelist.phtml'; ?>
+    </div>
+</div>

@@ -453,6 +453,7 @@ button,
   bottom: 0;
   left: 0;
   background-size: cover;
+  background-position: center center;
   opacity: 0.5;
   border-radius: 2px;
   transition: opacity 200ms;
@@ -768,9 +769,17 @@ button,
   text-transform: uppercase;
   text-decoration: none;
 }
+.article .bottomlinks {
+  padding: 1em 0;
+}
 hr {
   margin: 3rem 1rem;
   border: none;
   height: 1px;
   background-color: rgba(0, 0, 0, 0.25);
+}
+textarea {
+  width: 100%;
+  min-height: 100px;
+  margin: 0;
 }

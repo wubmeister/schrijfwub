@@ -5,9 +5,9 @@
 	window.addEventListener('scroll', function () {
 		var scrollTop = window.pageYOffset;
 
-		if (scrollTop >= 200 && lastScrollTop < 200) {
+		if (scrollTop >= 100 && lastScrollTop < 100) {
 			topbar.classList.add('scrolled');
-		} else if (scrollTop < 200 && lastScrollTop >= 200) {
+		} else if (scrollTop < 100 && lastScrollTop >= 100) {
 			topbar.classList.remove('scrolled');
 		}
 
