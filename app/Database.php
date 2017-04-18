@@ -22,9 +22,18 @@ class Database
     /**
      * Constructs the Database object and connects to the database
      */
-    public function __construct()
+    public function __construct($config)
     {
-        $this->pdo = new PDO('mysql:host=127.0.0.1;dbname=blog', 'bloguser', 'eD9JEajJLzqskyYJWVDX');
+        $engine = $config['engine'];
+        $username = $config['username'];
+        $password = $config['password'];
+        unset($config['engine'], $config['username'], $config['password']);
+
+        $params = [];
+        foreach($config as $key => $value) $params[] = "{$key}={$value}";
+        $dsn = "{$engine}:" . implode(';', $params);
+
+        $this->pdo = new PDO($dsn, $username, $password);
         $this->pdo->exec("SET time_zone='" . date('P') . "'");
     }
 
