@@ -8,6 +8,8 @@ class MainRouter extends AbstractRouter
 {
 	protected function matchAgainst($url)
 	{
+		global $db;
+
 		$chunks = $this->chunkify($url);
 		$match = [];
 
@@ -24,6 +26,12 @@ class MainRouter extends AbstractRouter
 				$match['route_tail'] = '/' . implode($chunks);
 				break;
 
+			case 'commenter':
+				shift($chunks);
+				$match['callable'] = new CommentsController($db);
+				$match['route_tail'] = '/' . implode($chunks);
+				break;
+
 			// case 'media':
 			// 	shift($chunks);
 			// 	$match['callable'] = new MediaController();
@@ -37,7 +45,7 @@ class MainRouter extends AbstractRouter
 			// 	break;
 
 			default:
-				$match['callable'] = new BlogController();
+				$match['callable'] = new BlogController($db);
 				break;
 		}
 

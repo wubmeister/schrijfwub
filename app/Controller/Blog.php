@@ -80,7 +80,13 @@ class Blog extends AbstractRouter
                 if ($cat) {
                     $this->showCategory($cat);
                 } else {
-                    $this->showArticle($chunks[0]);
+                    if (count($chunks) > 1 && $chunks[1] == 'comments') {
+                        shift($chunks);
+                        $match['callable'] = new Comments($this->db);
+                        $match['tail'] = implode('/', $chunks);
+                    } else {
+                        $this->showArticle($chunks[0]);
+                    }
                 }
         }
 
