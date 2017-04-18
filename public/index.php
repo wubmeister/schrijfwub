@@ -12,9 +12,11 @@ use App\Template;
 
 session_start();
 
+$config = include dirname(__DIR__) . '/config/local.config.php';
+
 Template::$themesDir = dirname(__DIR__) . '/templates';
 
-$db = new App\Database();
+$db = new App\Database($config['db']);
 $articleStorage = new App\ArticleStorage($db);
 
 /* Basic login check */
