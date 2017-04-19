@@ -56,6 +56,7 @@ function sendMail($subject, $templateName, $toName, $toEmail, $variables)
 	$template->toEmail = $toEmail;
 	$mail->setBody($template->render($variables));
 
+	// $transport = new App\Mail\Transport\Mailgun('sandboxe62c14ce20584e6b9317f3f38e244398.mailgun.org', 'key-4b681f8cf3cfa78a9670d56ffcad6e24');
 	$transport = new App\Mail\Transport\Sendmail();
 	$transport->send($mail);
 }

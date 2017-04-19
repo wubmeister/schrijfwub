@@ -80,6 +80,36 @@ class Mail
     }
 
     /**
+     * Gets the 'from' address
+     *
+     * @param bool $emailOnly Set to TRUE te rturn only an e-mail address
+     * @return string The 'from' address
+     */
+    public function getFrom($emailOnly = false)
+    {
+        if (!isset($this->headers['From'])) {
+            return null;
+        }
+
+        if ($emailOnly) {
+            $info = $this->addrInfo($this->headers['From']);
+            return $info['email'];
+        }
+
+        return $this->headers['From'];
+    }
+
+    /**
+     * Gets the return path
+     *
+     * @return string The return path, i.e. a single e-mail address
+     */
+    public function getReturnPath()
+    {
+        return $this->returnPath;
+    }
+
+    /**
      * Adds a 'to' address
      *
      * @param string $address The from address, e.g. 'user@domain.com' or 'User Name <user@domain.com>'
@@ -170,6 +200,16 @@ class Mail
     }
 
     /**
+     * Gets the subject of the mail
+     *
+     * @return string The subject
+     */
+    public function getSubject()
+    {
+        return isset($this->headers['Subject']) ? $this->headers['Subject'] : '';
+    }
+
+    /**
      * Sets the body of the mail
      *
      * @param string $body The body
@@ -178,6 +218,16 @@ class Mail
     public function setBody($body)
     {
         $this->body = $body;
+    }
+
+    /**
+     * Gets the body of the mail
+     *
+     * @return string The mail body
+     */
+    public function getBody()
+    {
+        return $this->body;
     }
 
     /**
@@ -202,26 +252,6 @@ class Mail
             $str .= $header . ': ' . (is_array($value) ? implode(', ', $value) : $value) . "\r\n";
         }
         return $str;
-    }
-
-    /**
-     * Gets the return path
-     *
-     * @return string The return path, i.e. a single e-mail address
-     */
-    public function getReturnPath()
-    {
-        return $this->returnPath;
-    }
-
-    /**
-     * Gets the body of the mail
-     *
-     * @return string The mail body
-     */
-    public function getBody()
-    {
-        return $this->body;
     }
 
     /**

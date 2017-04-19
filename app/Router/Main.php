@@ -34,7 +34,7 @@ class Main extends AbstractRouter
 
 			case 'mail':
 				$match['response'] = $this->response;
-				sendMail('Testmail', 'testmail', 'Wubbo Bos', 'wubbobos@gmail.com', [ 'foo' => 'Bar' ]);
+				// sendMail('Testmail', 'testmail', 'Wubbo Bos', 'wubbo@wubbobos.nl', [ 'foo' => 'Bar' ]);
 				break;
 
 			// case 'media':
