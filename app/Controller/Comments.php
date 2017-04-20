@@ -83,15 +83,15 @@ class Comments extends AbstractRouter
 				if (!$values['name']) {
 					$result['errors']['name'] = 'Please enter a name';
 				} else {
-					$commenter = $commenterStorage->createWithEmail($values['email'], $values['name']);
+					$commenter = $commenterStorage->createWithEmailAndName($values['email'], $values['name']);
 				}
 			}
 
 			if ($commenter) {
-				$result['commenter_key'] = $commenter['id'];
+				$result['commenter'] = $commenter;
 			}
 		} else if (isset($values['commenter_key'])) {
-			$commenter = $commenterStorage->findById($values['commenter_key']);
+			$commenter = $commenterStorage->find($values['commenter_key']);
 		} else {
 			$result['errors']['email'] = 'Please enter an e-mail address';
 		}
@@ -122,10 +122,20 @@ class Comments extends AbstractRouter
 
 					$id = $commentStorage->insert($data);
 					if ($data['is_visible']) {
-						$result['comment'] = $commentStorage->findById($id);
-						sendEmail('confirm_comment', $ommenter['name'], $commenter['email'], [ 'url' => '/' . $artcile['slug'] . '/comments?action=confirm&email=' . $commenter['email'] . '&key=' . $data['confirm_key'] . '&comment=' . $id ]);
+						$result['comment'] = $commentStorage->find($id);
 					} else {
-						$result['message'] = [ 'type' => 'info', 'message' => 'We have send you an e-mail with a link to confirm your comment. Please check your mailbox and click on the link to confirm that it was you who commented.' ];
+						$result['message'] = [
+							'type' => 'info',
+							'message' => 'We have send you an e-mail with a link to confirm your comment. Please check your mailbox and click on the link to confirm that it was you who commented.'
+						];
+
+						sendEmail(
+							'Confirm your comment',
+							'blog/comm-confirm-email',
+							$commenter['name'],
+							$commenter['email'],
+							[ 'url' => '/' . $artcile['slug'] . '/comments?action=confirm&email=' . $commenter['email'] . '&key=' . $data['confirm_key'] . '&comment=' . $id ]
+						);
 					}
 				}
 			}
@@ -155,14 +165,14 @@ class Comments extends AbstractRouter
 		} else {
 			$commentStorage = new CommentStorage($this->db);
 
-			$comment = $commentStorage->findById($values['comment']);
+			$comment = $commentStorage->find($values['comment']);
 			if (!$comment || $comment['commenter_id'] != $commenter['id'] || $comment['confirm_key'] != $values['key']) {
 				$result['errors']['comment'] = 'Invalid comment';
 			} else {
 				$update = [ 'is_visible' => 1, 'confirm_key' => null ];
 				$commentStorage->update($update, $comment['id']);
 
-				$article = $articleStorage->findById($comment['article_id']);
+				$article = $articleStorage->find($comment['article_id']);
 				header('Location: /' . $article['slug'] . '#comments');
 				exit;
 			}
@@ -189,8 +199,7 @@ class Comments extends AbstractRouter
 
 		$result = [
 			'found' => $commenter ? true : false,
-			'name' => $commenter['name'],
-			'key' => $commenter['id']
+			'commenter' => $commenter
 		];
 
 		$response = new JsonResponse();
