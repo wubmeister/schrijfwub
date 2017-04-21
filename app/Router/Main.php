@@ -15,21 +15,18 @@ class Main extends AbstractRouter
 
 		switch ($chunks[0]) {
 			case 'login':
-				shift($chunks);
 				$match['callable'] = 'handleLogin';
-				$match['route_tail'] = '/' . implode($chunks);
+				$match['route_tail'] = '/' . implode('/', array_slice($chunks, 1));
 				break;
 
 			case 'logout':
-				shift($chunks);
 				$match['callable'] = 'handleLogin';
-				$match['route_tail'] = '/' . implode($chunks);
+				$match['route_tail'] = '/' . implode('/', array_slice($chunks, 1));
 				break;
 
 			case 'commenter':
-				shift($chunks);
 				$match['callable'] = new CommentsController($db);
-				$match['route_tail'] = '/' . implode($chunks);
+				$match['route_tail'] = '/' . implode('/', array_slice($chunks, 1));
 				break;
 
 			case 'mail':
