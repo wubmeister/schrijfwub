@@ -55,7 +55,7 @@ $this->setGlobal('title', $title);
 </div>
 
 <?php $this->startCapture('scripts'); ?>
-<script src="/assets/ckeditor/ckeditor.js"></script>
+<?= $this->asset("ckeditor/ckeditor.js") ?>
 
 <script>
 CKEDITOR.replace('article_content');
