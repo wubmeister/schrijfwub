@@ -1,29 +1,20 @@
 <?php
 
-namespace App\Storage;
+namespace App\Blog\Storage;
 
 use App\Database;
+use App\Storage\AbstractStorage;
 
 /**
  * Class to manage blog articles in the database
  */
-class Articles
+class Articles extends AbstractStorage
 {
     /**
-     * The database
-     * @var $db;
+     * The table name
+     * @var string
      */
-    protected $db;
-
-    /**
-     * Constructs the storage object with a database adapter
-     *
-     * @param App\Database $db The database
-     */
-    public function __construct(Database $db)
-    {
-        $this->db = $db;
-    }
+    protected $table = 'blog_articles';
 
     /**
      * Lists all the articles which match the specified conditions
@@ -160,5 +151,80 @@ class Articles
         $list = $this->db->fetchAll($sql);
 
         return $list;
+    }
+
+    /**
+     * Gets a category by its slug
+     *
+     * @param string $slug The category slug
+     * @return array The category from teh database or NULL if no category exists with that slug
+     */
+    public function findCategoryBySlug($slug)
+    {
+        return $this->db->fetchRow("SELECT * FROM `blog_categories` WHERE `type` = 'cat' AND `slug` = :slug", [ 'slug' => $slug ]);
+    }
+
+    /**
+     * Updates an article's categories
+     *
+     * @param int $articleId The article ID
+     * @param array $categoryes The categories. All items prefixed with 'id:'
+     *    will be treated as category IDs. Everything else will be treated as
+     *    new category names.
+     */
+    public function updateCategories($articleId, $categories)
+    {
+        $linkedIds = [];
+
+        $linkSql = "INSERT IGNORE INTO `blog_category_has_articles` (`category_id`, `article_id`) VALUES (:category_id, :article_id)";
+        $linkParams = [ 'article_id' => $articleId ];
+        $addSql = "INSERT INTO `blog_categories` (`type`, `name`, `slug`, `created`) VALUES ('cat', :name, :slug, NOW())";
+        $addParams = [ ];
+
+        foreach ($categories as $category) {
+            $category = trim($category);
+            if ($category) {
+                if (substr($category, 0, 3) == 'id:' && is_numeric(substr($category, 3))) {
+                    $linkParams['category_id'] = (int)substr($category, 3);
+                } else {
+                    $addParams['name'] = $category;
+                    $addParams['slug'] = generateSlug($category);
+                    $this->db->query($addSql, $addParams);
+                    $linkParams['category_id'] = $this->db->getLastInsertId();
+                }
+
+                if ($linkParams['category_id']) {
+                    $linkedIds[] = $linkParams['category_id'];
+                    $this->db->query($linkSql, $linkParams);
+                }
+            }
+        }
+
+        $sql = "DELETE FROM `blog_category_has_articles` WHERE `article_id` = :article_id";
+        $params = [ 'article_id' => $articleId ];
+        if (count($linkedIds)) {
+            $sql .= " AND `category_id` NOT IN (" . implode(',', $linkedIds) . ")";
+        }
+
+        $this->db->query($sql, $params);
+    }
+
+    /**
+     * Gets all the existing categories
+     *
+     * @param int $articleId If specified, this method will find all categories
+     *    linked to the article with that ID. If omitted, this method will find
+     *    all categories.
+     * @return array The category rows
+     */
+    public function getCategories($articleId = null)
+    {
+        if ($articleId) {
+            $sql = "SELECT * FROM `blog_category_has_articles` AS `link` LEFT JOIN `blog_categories` AS `c` ON `c`.`id` = `link`.`category_id`
+                WHERE `link`.`article_id` = :article_id";
+            return $this->db->fetchAll($sql, [ 'article_id' => $articleId ]);
+        }
+
+        return $this->db->fetchAll("SELECT * FROM `blog_categories` WHERE `type` = 'cat' ORDER BY `name`");
     }
 }

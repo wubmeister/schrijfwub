@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Storage;
+namespace App\Blog\Storage;
 
 /**
  * Class to manage comments on articles

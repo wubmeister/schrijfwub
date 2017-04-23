@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Controller;
+namespace App\Blog\Controller;
 
 use App\Router\AbstractRouter;
 use App\Template;
 use App\Database;
-use App\Storage\Articles as ArticleStorage;
+use App\Blog\Storage\Articles as ArticleStorage;
 
 /**
  * This 'controller' does everything blog-related
@@ -35,10 +35,9 @@ class Blog extends AbstractRouter
      *
      * @param Database $db The database
      */
-    public function __construct(Database $db)
+    public function __construct(ArticleStorage $storage)
     {
-        $this->db = $db;
-        $this->articleStorage = new ArticleStorage($db);
+        $this->articleStorage = $storage;
         $this->layout = new Template('layout');
     }
 
@@ -74,7 +73,7 @@ class Blog extends AbstractRouter
                 break;
 
             default:
-                $cat = $this->db->fetchRow("SELECT * FROM `blog_categories` WHERE `type` = 'cat' AND `slug` = :slug", [ 'slug' => $chunks[0] ]);
+                $cat = $this->articleStorage->findCategoryBySlug($chunks[0]);
                 if ($cat) {
                     $this->showCategory($cat);
                 } else {
@@ -215,66 +214,30 @@ class Blog extends AbstractRouter
             }
 
             if ($article) {
-                $this->db->update('blog_articles', (int)$article['id'], $values);
+                $this->articleStorage->update($values, (int)$article['id']);
                 $result['article'] = array_merge($article, $values);
                 $result['formSuccess'] = true;
             } else {
-                $id = $this->db->insert('blog_articles', $values);
+                $id = $this->articleStorage->insert($values);
                 if (!$id) {
-                    $result['error'] = $this->db->getErrorMessage();
+                    $result['error'] = $this->articleStorage->getErrorMessage();
                     $result['article'] = $values;
                 } else {
-                    $sql = "SELECT * FROM `blog_articles` WHERE `id` = :id";
-                    $article = $result['article'] = $this->db->fetchRow($sql, [ 'id' => $id ]);
+                    $article = $result['article'] = $this->articleStorage->find($id);
                     $result['formSuccess'] = true;
                 }
             }
 
             if ($result['formSuccess'] && $article['id'] && $categories !== null) {
-                $linkedIds = [];
-
-                $linkSql = "INSERT IGNORE INTO `blog_category_has_articles` (`category_id`, `article_id`) VALUES (:category_id, :article_id)";
-                $linkParams = [ 'article_id' => $article['id'] ];
-                $addSql = "INSERT INTO `blog_categories` (`type`, `name`, `slug`, `created`) VALUES ('cat', :name, :slug, NOW())";
-                $addParams = [ ];
-
-                foreach ($categories as $category) {
-                    $category = trim($category);
-                    if ($category) {
-                        if (substr($category, 0, 3) == 'id:' && is_numeric(substr($category, 3))) {
-                            $linkParams['category_id'] = (int)substr($category, 3);
-                        } else {
-                            $addParams['name'] = $category;
-                            $addParams['slug'] = generateSlug($category);
-                            $this->db->query($addSql, $addParams);
-                            $linkParams['category_id'] = $this->db->getLastInsertId();
-                        }
-
-                        if ($linkParams['category_id']) {
-                            $linkedIds[] = $linkParams['category_id'];
-                            $this->db->query($linkSql, $linkParams);
-                        }
-                    }
-                }
-
-                $sql = "DELETE FROM `blog_category_has_articles` WHERE `article_id` = :article_id";
-                $params = [ 'article_id' => $article['id'] ];
-                if (count($linkedIds)) {
-                    $sql .= " AND `category_id` NOT IN (" . implode(',', $linkedIds) . ")";
-                }
-
-                $this->db->query($sql, $params);
+                $this->articleStorage->updateCategories($article['id'], $categories);
             }
 
         }
 
-        $catSql = "SELECT * FROM `blog_categories` WHERE `type` = 'cat' ORDER BY `name`";
-        $result['categoryOptions'] = $this->db->fetchAll($catSql);
+        $result['categoryOptions'] = $this->articleStorage->getCategories();
 
         if ($article && $article['id']) {
-            $linkCatSql = "SELECT * FROM `blog_category_has_articles` AS `link` LEFT JOIN `blog_categories` AS `c` ON `c`.`id` = `link`.`category_id`
-                WHERE `link`.`article_id` = :article_id";
-            $linkedCats = $this->db->fetchAll($linkCatSql, [ 'article_id' => $article['id'] ]);
+            $linkedCats = $this->articleStorage->getCategories($article['id']);
             $result['linkedCategories'] = array_map(function ($cat) { return $cat['id']; }, $linkedCats);
         }
 

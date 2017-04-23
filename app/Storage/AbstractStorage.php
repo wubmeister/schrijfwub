@@ -78,6 +78,16 @@ class AbstractStorage
      */
     public function update($columns, $id)
     {
-        return $this->db->update($id, $columns);
+        return $this->db->update($this->table, $id, $columns);
+    }
+
+    /**
+     * Gets the last error message from the database
+     *
+     * @return string The error message
+     */
+    public function getErrorMessage()
+    {
+        return $this->db->getErrorMessage();
     }
 }

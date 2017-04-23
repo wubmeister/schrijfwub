@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Blog\Controller;
 
 use App\Router\AbstractRouter;
 use App\Database;

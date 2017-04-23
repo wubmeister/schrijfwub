@@ -32,24 +32,186 @@
                 <?php if (isLoggedIn()): ?> - <a href="/edit/<?= $article['slug'] ?>">Bewerken</a><?php endif; ?>
             </div>
 
-            <div id="disqus_thread"></div>
-            <script>
-            (function() { // DON'T EDIT BELOW THIS LINE
-            var d = document, s = d.createElement('script');
-            s.src = 'https://wubbbobos.disqus.com/embed.js';
-            s.setAttribute('data-timestamp', +new Date());
-            (d.head || d.body).appendChild(s);
-            })();
-            </script>
-            <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-
-            <?php $this->startCapture('scripts'); ?>
-            <script id="dsq-count-scr" src="//wubbbobos.disqus.com/count.js" async></script>
-            <?php $this->endCapture(); ?>
         </article>
+
+        <div class="comments">
+            <h3 class="headline">4 comments</h3>
+
+            <h4 class="subheader">Schrijf een reactie</h4>
+
+            <form class="" id="comment_form">
+                <div class="form_logged_in">
+                    <input type="hidden" name="commenter_key" />
+                    <div class="meta">Plaats een reactie als <a href="/" class="author" id="commenter_name"></a> (<span id="commenter_email"></span>) <span class="divider">&bull;</span> <a href="/" class="author" id="change_commenter">Wijzigen</a></div>
+                </div>
+
+                <div class="input">
+                    <label for="comment_comment">Wat is hierop je reactie?</label>
+                    <textarea id="comment_comment"></textarea>
+                </div>
+
+                <div class="form_credentials">
+                    <div class="input">
+                        <label for="comment_email">E-mailadres</label>
+                        <input type="email" id="comment_email">
+                    </div>
+                    <div class="input">
+                        <label for="comment_author">Naam</label>
+                        <input type="text" id="comment_author">
+                    </div>
+                </div>
+
+                <div class="input">
+                    <label for="comment_comment2">Wat is hierop je reactie?</label>
+                    <textarea id="comment_comment2"></textarea>
+                </div>
+
+                <button type="submit" class="red button">Plaats reactie</button>
+            </form>
+
+            <hr>
+
+            <div class="comment">
+                <img class="image" src="photos/marty.jpg" />
+                <div class="content">
+                    <div class="meta">
+                        <span class="author">Marty McFly</span>
+                        <span class="divider">&bull;</span>
+                        <span class="time">2 hours ago</span>
+                    </div>
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod.
+                    <div class="actions">
+                        <a href="#" class="reply">Reply</a>
+                    </div>
+
+                    <div class="comment">
+                        <img class="image" src="photos/drbrown.jpg" />
+                        <div class="content">
+                            <div class="meta">
+                                <span class="author">Dr. Emmett Brown</span>
+                                <span class="divider">&bull;</span>
+                                <span class="time">3 hours ago</span>
+                            </div>
+                            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod.
+                            <div class="actions">
+                                <a href="#" class="reply">Reply</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="comment">
+                        <img class="image" src="photos/drbrown.jpg" />
+                        <div class="content">
+                            <div class="meta">
+                                <span class="author">Dr. Emmett Brown</span>
+                                <span class="divider">&bull;</span>
+                                <span class="time">3 hours ago</span>
+                            </div>
+                            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod.
+                            <div class="actions">
+                                <a href="#" class="reply">Reply</a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="comment">
+                <img class="image" src="photos/drbrown.jpg" />
+                <div class="content">
+                    <div class="meta">
+                        <span class="author">Dr. Emmett Brown</span>
+                        <span class="divider">&bull;</span>
+                        <span class="time">3 hours ago</span>
+                    </div>
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod.
+                    <div class="actions">
+                        <a href="#" class="reply">Reply</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="three wide column sidebar">
         <?php include 'archivelist.phtml'; ?>
     </div>
+
+    <?php $this->startCapture('scripts', true); ?>
+    <script>
+    (function () {
+        var emailInput, nameInput, commentInput, commenterKeyInput, key, isFetching = false;
+
+        emailInput = document.querySelector('[name="email"]');
+        nameInput = document.querySelector('[name="name"]');
+        commentInput = document.querySelector('[name="comment"]');
+        commenterKeyInput = document.querySelector('[name="commenter_key"]');
+
+        function showLoggedInPart(commenter) {
+            commenterKey.value = commenter.id;
+            document.getElementById('commenter_name').innerHTML = commenter.name;
+            document.getElementById('commenter_email').innerHTML = commenter.email;
+            document.querySelector('.form_credentials').style.display = 'none';
+            document.querySelector('.form_logged_in').style.display = 'block';
+        }
+
+        function hideLoggedInPart() {
+            commenterKey.value = '';
+            document.querySelector('.form_credentials').style.display = 'block';
+            document.querySelector('.form_logged_in').style.display = 'none';
+        }
+
+        emailInput.addEventListener('change', function(e) {
+            var xhr;
+
+            if (/^[^@]+@([^\.]+\.)+[a-z]{2,10}$/.test(this.value) && !isFetching) {
+                xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = function () {
+                    var result;
+
+                    if (this.readyState == 4) {
+                        if (this.status == 200) {
+                            result = JSON.parse(this.responseText);
+                            if (result) {
+                                if (result.found) {
+                                    showLoggedInPart(result.commenter);
+                                }
+                            } else {
+                                console.error('Error parsing JSON');
+                            }
+                        } else {
+                            console.error(this.statusText);
+                        }
+                    }
+                }
+                xhr.open('get', '/commenter/' + this.value);
+                xhr.send();
+            }
+        });
+
+        if (commenter = localStorage.getItem('commenter')) {
+            showLoggedInPart(commenter);
+        }
+
+        document.getElementById('change_commenter').addEventListener('click', function (e) {
+            e.preventDefault();
+            hideLoggedInPart();
+        });
+
+        document.getElementById('comment_form').addEventListener('submit', function (e) {
+            var data = {};
+
+            e.preventDefault();
+
+            if (commenterKeyInput.value) {
+                data.commenter_key = commenterKeyInput.value;
+            } else {
+                data.email = emailInput.value;
+                data.name = nameInput.value;
+            }
+        });
+    });
+    </script>
+    <?php $this->endCapture(); ?>
 </div>
