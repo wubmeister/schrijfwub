@@ -24,13 +24,16 @@ class Database
      */
     public function __construct($config)
     {
-        $engine = $config['engine'];
-        $username = $config['username'];
-        $password = $config['password'];
-        unset($config['engine'], $config['username'], $config['password']);
+        $engine = $config->engine;
+        $username = $config->username;
+        $password = $config->password;
 
         $params = [];
-        foreach($config as $key => $value) $params[] = "{$key}={$value}";
+        foreach($config as $key => $value) {
+            if ($key != 'engine' && $key != 'username' && $key != 'password') {
+                $params[] = "{$key}={$value}";
+            }
+        }
         $dsn = "{$engine}:" . implode(';', $params);
 
         $this->pdo = new PDO($dsn, $username, $password);

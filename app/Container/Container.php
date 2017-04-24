@@ -51,12 +51,16 @@ class Container implements ContainerInterface
      * Adds a factory for a service with the specified id
      *
      * @param string $id The identifier of the service
-     * @param callable $factory The factory
+     * @param mixed $factoryOrService Either a callable, which will be treated as a factory, or an other value, which will be treated as a service instance
      * @return static $this for chaining
      */
-    public function set($id, callable $factory)
+    public function set($id, $factoryOrService)
     {
-        $this->factories[$id] = $factory;
+        if (is_callable($factoryOrService)) {
+            $this->factories[$id] = $factoryOrService;
+        } else {
+            $this->services[$id] = $factoryOrService;
+        }
         return $this;
     }
 

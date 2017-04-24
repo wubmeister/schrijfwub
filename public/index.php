@@ -10,47 +10,35 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use App\Template;
 use App\Container\Container;
+use App\Config\Cacher as ConfigCacher;
+
+define('ENV', 'development');
 
 session_start();
 
 Template::$themesDir = dirname(__DIR__) . '/templates';
 
+$cacher = ConfigCacher::factory(dirname(__DIR__) . '/cache/config.php', ENV == 'development')
+    ->build(function ($cacher) {
+        $cacher->loadConfig(dirname(__DIR__) . '/config/local.config.php');
+        $cacher->loadConfig(dirname(__DIR__) . '/app/Blog/module.config.php');
+    })
+    ->storeCache();
+
 $container = new Container();
 $container
-    ->set('Config', function ($container) {
-        $config = include dirname(__DIR__) . '/config/local.config.php';
-        return $config;
-    })
+    ->set('Config', $cacher->getConfig())
     ->set('Database', function ($container) {
         $config = $container->get('Config');
-        return new App\Database($config['db']);
+        return new App\Database($config->db);
     })
     ->set('MainModule', function ($container) {
         return new App\MainModule($container);
-    })
-    ->set('BlogModule', function ($container) {
-        $container->set('ArticleStorage', function ($container) {
-            $db = $container->get('Database');
-            return new App\Blog\Storage\Articles($db);
-        });
-
-        $container->set('CommentStorage', function ($container) {
-            $db = $container->get('Database');
-            return new App\Blog\Storage\Comments($db);
-        });
-
-        $container->set('BlogController', function ($container) {
-            $storage = $container->get('ArticleStorage');
-            return new App\Blog\Controller\Blog($storage);
-        });
-
-        $container->set('CommentsController', function ($container) {
-            $storage = $container->get('ArticleStorage');
-            return new App\Blog\Controller\Comments($storage);
-        });
-
-        return new \App\Blog\Module($container);
     });
+
+foreach ($config->services as $key => $factory) {
+    $container->set($key, $factory);
+}
 
 /* Basic login check */
 
