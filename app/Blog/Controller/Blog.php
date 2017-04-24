@@ -214,7 +214,7 @@ class Blog extends AbstractRouter
             }
 
             if ($article) {
-                $this->articleStorage->update($values, (int)$article['id']);
+                $this->articleStorage->update($values, (int)$article->id);
                 $result['article'] = array_merge($article, $values);
                 $result['formSuccess'] = true;
             } else {
@@ -228,17 +228,17 @@ class Blog extends AbstractRouter
                 }
             }
 
-            if ($result['formSuccess'] && $article['id'] && $categories !== null) {
-                $this->articleStorage->updateCategories($article['id'], $categories);
+            if ($result['formSuccess'] && $article->id && $categories !== null) {
+                $this->articleStorage->updateCategories($article->id, $categories);
             }
 
         }
 
         $result['categoryOptions'] = $this->articleStorage->getCategories();
 
-        if ($article && $article['id']) {
-            $linkedCats = $this->articleStorage->getCategories($article['id']);
-            $result['linkedCategories'] = array_map(function ($cat) { return $cat['id']; }, $linkedCats);
+        if ($article && $article->id) {
+            $linkedCats = $this->articleStorage->getCategories($article->id);
+            $result['linkedCategories'] = array_map(function ($cat) { return $cat->id; }, $linkedCats);
         }
 
         $template = new Template('blog/edit-article');
@@ -251,7 +251,7 @@ class Blog extends AbstractRouter
      */
     protected function showCategory($category)
     {
-        $result = $this->articleStorage->fetchByCategory($category['id']);
+        $result = $this->articleStorage->fetchByCategory($category->id);
 
         $template = new Template('blog/category');
         $template->category = $category;

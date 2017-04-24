@@ -31,7 +31,7 @@ class Articles extends AbstractStorage
         $sql = "SELECT {$columns} {$from} {$where}";
 
         $countRow = $this->db->fetchRow($countSql, $params);
-        $pagination = $this->getPagination($countRow ? (int)$countRow['count'] : 0);
+        $pagination = $this->getPagination($countRow ? (int)$countRow->count : 0);
 
         $sql .= " ORDER BY `published` DESC LIMIT {$pagination['first_item_index']}, {$pagination['items_per_page']}";
 
@@ -121,14 +121,14 @@ class Articles extends AbstractStorage
 
         $years = [];
         foreach ($rows as $row) {
-            list($year, $month) = explode('-', $row['year_month']);
-            $time = strtotime($row['year_month'].'-01 00:00:00');
+            list($year, $month) = explode('-', $row->year_month);
+            $time = strtotime($row->year_month.'-01 00:00:00');
 
             if (!isset($years[$year])) {
                 $years[$year] = [ 'count' => 0, 'months' => [] ];
             }
-            $years[$year]['count'] += (int)$row['count'];
-            $years[$year]['months'][$month] = [ 'count' => (int)$row['count'], 'name' => strftime('%B', $time) ];
+            $years[$year]['count'] += (int)$row->count;
+            $years[$year]['months'][$month] = [ 'count' => (int)$row->count, 'name' => strftime('%B', $time) ];
         }
 
         return $years;

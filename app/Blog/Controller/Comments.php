@@ -97,7 +97,7 @@ class Comments extends AbstractRouter
 		}
 
 		if ($commenter) {
-			if ($commenter['is_active'] == 0) {
+			if ($commenter->is_active == 0) {
 				$result['errors']['commenter_key'] = 'Your e-mail address has been blocked by the administrator';
 			} else {
 				if (!$values['comment']) {
@@ -106,16 +106,16 @@ class Comments extends AbstractRouter
 					$commentStorage = new CommentStorage($this->db);
 
 					$data = [
-						'article_id' => $article['id'],
+						'article_id' => $article->id,
 						'in_reply_to' => $values['in_reply_to'],
-						'commenter_id' => $commenter['id'],
+						'commenter_id' => $commenter->id,
 						'ip' => $_SERVER['REMOTE_ADDR'],
 						'comment' => $values['comment']
 					];
 
-					$knownIps = $commentStorage->getIpListByCommenter($commenter['id']);
+					$knownIps = $commentStorage->getIpListByCommenter($commenter->id);
 					if (!in_array($_SERVER['REMOTE_ADDR'], $knownIps)) {
-						$data['confirm_key'] = md5(time() . $commenter['email']);
+						$data['confirm_key'] = md5(time() . $commenter->email);
 						$data['is_visible'] = 0;
 
 					}
@@ -132,9 +132,9 @@ class Comments extends AbstractRouter
 						sendEmail(
 							'Confirm your comment',
 							'blog/comm-confirm-email',
-							$commenter['name'],
-							$commenter['email'],
-							[ 'url' => '/' . $artcile['slug'] . '/comments?action=confirm&email=' . $commenter['email'] . '&key=' . $data['confirm_key'] . '&comment=' . $id ]
+							$commenter->name,
+							$commenter->email,
+							[ 'url' => '/' . $artcile->slug . '/comments?action=confirm&email=' . $commenter->email . '&key=' . $data['confirm_key'] . '&comment=' . $id ]
 						);
 					}
 				}
@@ -166,14 +166,14 @@ class Comments extends AbstractRouter
 			$commentStorage = new CommentStorage($this->db);
 
 			$comment = $commentStorage->find($values['comment']);
-			if (!$comment || $comment['commenter_id'] != $commenter['id'] || $comment['confirm_key'] != $values['key']) {
+			if (!$comment || $comment->commenter_id != $commenter->id || $comment->confirm_key != $values['key']) {
 				$result['errors']['comment'] = 'Invalid comment';
 			} else {
 				$update = [ 'is_visible' => 1, 'confirm_key' => null ];
-				$commentStorage->update($update, $comment['id']);
+				$commentStorage->update($update, $comment->id);
 
-				$article = $articleStorage->find($comment['article_id']);
-				header('Location: /' . $article['slug'] . '#comments');
+				$article = $articleStorage->find($comment->article_id);
+				header('Location: /' . $article->slug . '#comments');
 				exit;
 			}
 		}

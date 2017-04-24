@@ -13,6 +13,6 @@
         <h4 class="subheader">Per categorie</h4>
         <ul class="navigation">
             <?php foreach ($categories as $cat): ?>
-                <li class="<?= ($cat['id'] == $category['id']) ? 'active ' : '' ?>item"><a href="/<?= $cat['slug'] ?>"><?= $cat['name'] ?> (<?= $cat['count'] ?>)</a></li>
+                <li class="<?= ($cat->id == $category->id) ? 'active ' : '' ?>item"><a href="/<?= $cat->slug ?>"><?= $cat->name ?> (<?= $cat->count ?>)</a></li>
             <?php endforeach; ?>
         </ul>

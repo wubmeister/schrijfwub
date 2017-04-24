@@ -75,7 +75,7 @@ class Database
     public function fetchAll($sql, $params = null)
     {
         $stmt = $this->query($sql, $params);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
 
     /**
@@ -88,7 +88,7 @@ class Database
     public function fetchRow($sql, $params = null)
     {
         $stmt = $this->query($sql, $params);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        return $stmt->fetch(PDO::FETCH_OBJ);
     }
 
     /**

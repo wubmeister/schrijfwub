@@ -1,12 +1,12 @@
 
             <?php foreach ($articles as $article): ?>
-                <a class="<?= ($article['image_url']) ? 'inverted ' : '' ?>block" href="/<?= $article['slug'] ?>">
-                    <?php if ($article['image_url']): ?>
-                    <div class="background" style="background-image: url(<?= $article['image_url'] ?>)"></div>
+                <a class="<?= ($article->image_url) ? 'inverted ' : '' ?>block" href="/<?= $article->slug ?>">
+                    <?php if ($article->image_url): ?>
+                    <div class="background" style="background-image: url(<?= $article->image_url ?>)"></div>
                     <?php endif; ?>
-                    <h2 class="headline"><?= $article['title'] ?></h2>
-                    <p class="lead"><?= $article['lead'] ?></p>
-                    <div class="date"><?= strftime('%e %B %Y', strtotime($article['published'])) ?></div>
+                    <h2 class="headline"><?= $article->title ?></h2>
+                    <p class="lead"><?= $article->lead ?></p>
+                    <div class="date"><?= strftime('%e %B %Y', strtotime($article->published)) ?></div>
                     <div class="readmore">Lees meer</div>
                 </a>
             <?php endforeach; ?>

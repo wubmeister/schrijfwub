@@ -1,5 +1,5 @@
 <?php
-$title = ($article && isset($article['id'])) ? "Edit '{$article['title']}'" : "New article";
+$title = ($article && isset($article->id)) ? "Edit '{$article->title}'" : "New article";
 $this->setGlobal('title', $title);
 ?>
 <div class="article">
@@ -12,22 +12,22 @@ $this->setGlobal('title', $title);
         <div style="color: red;"><?= $error ?></div>
     <?php endif; ?>
 
-    <form method="post" action="/edit<?= $article ? '/'.$article['slug'] : '' ?>">
+    <form method="post" action="/edit<?= $article ? '/'.$article->slug : '' ?>">
         <p>
             <label for="article_title">Title:</label><br/>
-            <input type="text" name="title" id="article_title" value="<?= $article ? $article['title'] : '' ?>" />
+            <input type="text" name="title" id="article_title" value="<?= $article ? $article->title : '' ?>" />
         </p>
         <p>
             <label for="article_lead">Lead:</label><br/>
-            <textarea name="lead" id="article_lead"><?= $article ? $article['lead'] : '' ?></textarea>
+            <textarea name="lead" id="article_lead"><?= $article ? $article->lead : '' ?></textarea>
         </p>
         <p>
             <label for="article_content">Content:</label><br/>
-            <textarea name="content" id="article_content"><?= $article ? $article['content'] : '' ?></textarea>
+            <textarea name="content" id="article_content"><?= $article ? $article->content : '' ?></textarea>
         </p>
         <p>
             <label for="article_image_url">Image URL:</label><br/>
-            <input type="text" name="image_url" id="article_image_url" value="<?= $article ? $article['image_url'] : '' ?>" />
+            <input type="text" name="image_url" id="article_image_url" value="<?= $article ? $article->image_url : '' ?>" />
         </p>
 
         <h3>Meta</h3>
@@ -41,15 +41,15 @@ $this->setGlobal('title', $title);
         </p>
         <p>
             <label for="article_published">Publish date:</label><br/>
-            <input type="text" name="published" id="article_published" value="<?= $article ? $article['published'] : '' ?>" />
+            <input type="text" name="published" id="article_published" value="<?= $article ? $article->published : '' ?>" />
         </p>
         <p>
             <button type="submit">Save</button>
         </p>
     </form>
 
-<?php if ($article && isset($article['id'])): ?>
-    <div class="bottomlinks"><a href="/<?= $article['slug'] ?>">Show article</a></div>
+<?php if ($article && isset($article->id)): ?>
+    <div class="bottomlinks"><a href="/<?= $article->slug ?>">Show article</a></div>
 <?php endif; ?>
 
 </div>
