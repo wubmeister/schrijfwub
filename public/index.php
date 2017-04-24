@@ -36,7 +36,7 @@ $container
         return new App\MainModule($container);
     });
 
-foreach ($config->services as $key => $factory) {
+foreach ($cacher->getConfig()->services as $key => $factory) {
     $container->set($key, $factory);
 }
 

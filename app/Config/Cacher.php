@@ -42,6 +42,8 @@ class Cacher
         $this->cacheFile = $cacheFile;
         if (!$forceReload) {
             $this->loadCache();
+        } else {
+            $this->config = new Config();
         }
     }
 
@@ -116,7 +118,7 @@ class Cacher
     public static function factory($cacheFile, $forceReload = false)
     {
         if (!self::$instance) {
-            self::$instance = new ConfigCacher($cacheFile, $forceReload);
+            self::$instance = new Cacher($cacheFile, $forceReload);
         }
         return self::$instance;
     }

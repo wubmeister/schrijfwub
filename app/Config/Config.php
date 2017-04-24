@@ -2,6 +2,9 @@
 
 namespace App\Config;
 
+use Iterator;
+use ReflectionFunction;
+
 class Config implements Iterator
 {
     /**
