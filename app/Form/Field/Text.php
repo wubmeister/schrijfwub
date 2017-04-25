@@ -20,7 +20,7 @@ class Text extends AbstractField
 		if (isset($this->options['attrs'])) {
 			$attrs = array_merge($this->options['attrs'], $attrs);
 		}
-		$attrs['type'] = 'text';
+		$attrs['type'] = isset($this->options['dataType']) ? $this->options['dataType'] : 'text';
 		$attrs['name'] = $this->name;
 		$attrs['id'] = $this->getId();
 
